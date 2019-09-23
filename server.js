@@ -1,31 +1,38 @@
+// Node modules for server.js
+require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const pool = require('./connection');
+const client = require('./database.js');
 
-const exp = express();
-// const PORT = process.env.PORT || 5000;
-exp.set('port', process.env.PORT || 5000);
+// Initialize express
+const app = express();
 
 // Connection to database
 const pgConnect = () => {
-  pool.connect(err => {
+  client.connect(err => {
     if (err) throw err;
 
-    console.log('Welcome to Eventonica');
-    console.log('connected as Administrator');
+    console.log('Welcome to Eventonica Database');
+    console.log('Connected as Administrator');
   });
 };
+
+// Initialize db connection
 pgConnect();
 
+// Set up port application
+app.set('port', process.env.PORT || 5000);
+
+// Setting up special middleware for production (deployed) application
 if (process.env.NODE_ENV === 'production') {
-  exp.use(cors());
-  exp.use(express.static(path.join(__dirname, 'client/build')));
-  // exp.get('*', (req, res) => res.sendfile(path.join(__dirname, 'client/build/index.html')));
+  app.use(cors());
+  app.use(express.static(path.join(__dirname, 'client/build')));
 }
 
+// Setting up special middleware for local development
 if (!process.env.NODE_ENV) {
-  exp.use(
+  app.use(
     cors({
       origin: 'https://localhost:3000',
       credentials: true
@@ -33,9 +40,12 @@ if (!process.env.NODE_ENV) {
   );
 }
 
-exp.use(express.urlencoded({ extended: false }));
-exp.use(express.json());
+// Body parsing middleware - https://learn.freecodecamp.org/apis-and-microservices/basic-node-and-express/use-body-parser-to-parse-post-requests/
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-exp.use('/api', require('./routes/api'));
+// Middleware to connect our routes
+app.use('/api', require('./routes/api'));
 
-exp.listen(exp.get('port'), () => console.log(`Server started on port ${exp.get('port')}`));
+// Make app listen on port we set above
+app.listen(app.get('port'), () => console.log(`Server started on port ${app.get('port')}`));
