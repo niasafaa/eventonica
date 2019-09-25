@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const pool = require('./connection');
+const client = require('./connection');
 
 const exp = express();
 // const PORT = process.env.PORT || 5000;
@@ -9,7 +9,7 @@ exp.set('port', process.env.PORT || 5000);
 
 // Connection to database
 const pgConnect = () => {
-  pool.connect(err => {
+  client.connect(err => {
     if (err) throw err;
 
     console.log('Welcome to Eventonica');

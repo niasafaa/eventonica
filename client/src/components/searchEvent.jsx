@@ -20,10 +20,10 @@ class searchEvent extends Component {
   render() {
     const result = this.state.result ? 
            <div>Here's an event in SF next week you might like:<br></br>
-            Title: ${this.state.result.title}<br></br>
-            Description: ${this.state.result.description}<br></br>
-            Start Time: ${this.state.result.start_time}<br></br>
-            Venue: ${this.state.result.venue_name}
+            Title: {this.state.result.title}<br></br>
+            Description: {this.state.result.description}<br></br>
+            Start Time: {this.state.result.start_time}<br></br>
+            Venue: {this.state.result.venue_name}
             </div> : null;
 
     return (
